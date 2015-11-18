@@ -1,8 +1,10 @@
 package probo;
 
+import probo.gen.probo.*;
+
 public class Test {
     public static void main(String[] args) {
-       // probo.gen.ProofParser p = null;
-        System.out.println("String[] args");
+       ProofParser p = new ProofParser(null);
+        System.out.println(p.getClass());
     }
 }
