@@ -1,4 +1,4 @@
-group 'probo'
+group 'com.colinchartier.probo'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
@@ -21,12 +21,15 @@ buildscript {
     }
 }
 
-antlr4.output = file('target/generated-sources/antlr4/' + project.group.replace('.', '/') + '/gen/' + project.name)
+def antlrOutputRoot = 'target/generated-sources/antlr4/'
+
+antlr4.output = file(antlrOutputRoot + project.group.replace('.', '/') + '/gen')
 
 sourceSets {
     main {
         java {
-            srcDir antlr4.output
+            //srcDir antlr4.output
+            srcDir 'target/generated-sources/antlr4/'
         }
     }
 }
@@ -34,12 +37,8 @@ sourceSets {
 // make the Java compile task depend on the antlr4 task
 compileJava.dependsOn antlr4
 antlr4 {
-    extraArgs=['-package', project.group + '.gen.' + project.name]
+    extraArgs=['-package', project.group + '.gen']
 }
-// compileJava.source antlr4.output, sourceSets.main.java
-
-// add the generated source files to the list of java sources
-// sourceSets.main.java.srcDirs += antlr4.output.classes
 
 // add antlr4 to classpath
 configurations {
