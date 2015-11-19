@@ -28,8 +28,7 @@ antlr4.output = file(antlrOutputRoot + project.group.replace('.', '/') + '/gen')
 sourceSets {
     main {
         java {
-            //srcDir antlr4.output
-            srcDir 'target/generated-sources/antlr4/'
+            srcDir antlrOutputRoot
         }
     }
 }
