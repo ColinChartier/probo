@@ -46,7 +46,7 @@ relative
     ;
 	
 set
-	: CAPITAL_LETTER
+	: LETTER
 	;
 
 expression 
@@ -120,10 +120,6 @@ POW
 
 LETTER
     : ('a'..'z') | ('A'..'Z')
-    ;
-
-CAPITAL_LETTER
-    : ('A'..'Z')
     ;
 
 DIGIT
