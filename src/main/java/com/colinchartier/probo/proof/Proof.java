@@ -10,4 +10,9 @@ public class Proof {
         Preconditions.checkNotNull(members);
         this.members = members;
     }
+
+    @Override
+    public String toString( ) {
+        return "Proof with " + members.size() + " members." + members.toString();
+    }
 }
