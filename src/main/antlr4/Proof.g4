@@ -34,45 +34,43 @@ justification
 	;
 	
 multiequation  
-    : expression (relop expression)+
+    : expression (relative expression)+
+    ;
+
+relative
+    : '>'
+    | '<'
+    | '='
+    | '>='
+    | '<='
     ;
 	
 set
-	: CAPITALLETTER
+	: CAPITAL_LETTER
 	;
 
 expression 
-    : multiplyingExpression (additionSubtraction multiplyingExpression)*
+    : expression additionSubtraction expression
+	| expression multiplicationDivision expression
+	| powExpression+
     ;
-	
-multiplyingExpression  
-    : implicitMultiplyingExpression (multiplicationDivision implicitMultiplyingExpression)*
-    ;
-
-implicitMultiplyingExpression
-	: (powExpression)+
-	;
 
 powExpression
-    : negativeAtom (POW negativeAtom)?
+    : negativeAtom (POW negativeAtom)*
     ;
 
 negativeAtom
     : (MINUS)? atom
     ;
 
-atom 
+atom
     : scientific
     | variable
-    | LPAREN expression RPAREN
+    | '(' expression ')'
     ;
 
 scientific
     : number (E number)?
-    ;
-
-relop 
-    : EQ | GT | LT
     ;
 
 number
@@ -90,41 +88,21 @@ additionSubtraction
 multiplicationDivision
     : TIMES|DIV
     ;
-            
-LPAREN 
-    : '('
-    ;
 
-RPAREN 
-    : ')'
-    ;
-
-PLUS 
+PLUS
     : '+'
     ;
 
-MINUS 
+MINUS
     : '-'
     ;
 
-TIMES 
+TIMES
     : '*'
     ;
 
-DIV 
+DIV
     : '/'
-    ;
-
-GT 
-    : '>'
-    ;
-
-LT 
-    : '<'
-    ;
-
-EQ
-    : '='
     ;
 
 POINT
@@ -143,15 +121,15 @@ POW
 LETTER
     : ('a'..'z') | ('A'..'Z')
     ;
-	
-CAPITALLETTER
-	: ('A'..'Z')
-	;
+
+CAPITAL_LETTER
+    : ('A'..'Z')
+    ;
 
 DIGIT
     : ('0'..'9')
     ;
 
-WS 
-    : [ \r\n\t]+ -> channel(HIDDEN)
+WS
+    : [ \r\n\t]+ -> skip
     ;
