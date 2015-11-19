@@ -1,8 +1,8 @@
 #probo#
 ##What is probo?##
-Probo is a validity checker for a certain restrictive kinds of proofs.
+Probo is a validity checker for a certain restrictive subset of proofs.
 
-It uses antlr to parse the proof, and then uses a list of axioms to determine if each transformation is valid.
+It uses [antlr](https://github.com/antlr/antlr4) to parse the proof, and then uses a list of axioms to determine if each transformation is valid.
 
 ##What is a proof?##
 Proofs are mathematical structures that prove beyond a doubt that something is true.
