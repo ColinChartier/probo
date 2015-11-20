@@ -1,7 +1,7 @@
 grammar Proof;
 
 proof
-	: (proofline LINE_BREAK)+
+	: (proofline (LINE_BREAK|EOF))+
 	;
 	
 proofline
@@ -74,7 +74,13 @@ scientific
     ;
 
 number
-    : DIGIT+ (POINT DIGIT+)?
+    : integer
+    | integer POINT integer
+    | POINT integer
+    ;
+
+integer
+    : DIGIT+
     ;
 
 variable

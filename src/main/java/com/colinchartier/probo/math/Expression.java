@@ -1,4 +1,4 @@
 package com.colinchartier.probo.math;
 
-public class Expression {
+public interface Expression {
 }

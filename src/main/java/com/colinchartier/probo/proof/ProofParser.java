@@ -1,17 +1,17 @@
 package com.colinchartier.probo.proof;
 
 import com.colinchartier.probo.gen.ProofLexer;
-import com.colinchartier.probo.math.BaseSet;
-import com.colinchartier.probo.math.Equation;
-import com.colinchartier.probo.math.Expression;
-import com.colinchartier.probo.math.RelativeOperator;
+import com.colinchartier.probo.math.*;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +60,7 @@ public class ProofParser {
         if (proofLine.assumption() != null) {
             parseAssumption(proofMembers, proofLine.assumption(), lineNumber);
         } else if (proofLine.deduction() != null) {
-            parseDeduction(proofMembers, proofLine.deduction());
+            parseDeduction(proofMembers, proofLine.deduction(), lineNumber);
         } else if (proofLine.definition() != null) {
             parseDefinition(proofMembers, proofLine.definition());
         } else {
@@ -74,8 +74,8 @@ public class ProofParser {
     }
 
 
-    private void parseDeduction(ImmutableList.Builder<ProofMember> proofMembers, com.colinchartier.probo.gen.ProofParser.DeductionContext deduction) {
-        proofMembers.add(new Deduction());
+    private void parseDeduction(ImmutableList.Builder<ProofMember> proofMembers, com.colinchartier.probo.gen.ProofParser.DeductionContext deduction, int lineNumber) throws ProofParsingException {
+        proofMembers.add(new Deduction(ImmutableList.copyOf(parseMultiequation(deduction.multiequation(), lineNumber))));
     }
 
     private void parseAssumption(ImmutableList.Builder<ProofMember> proofMembers, com.colinchartier.probo.gen.ProofParser.AssumptionContext assumption, int lineNumber) throws ProofParsingException {
@@ -87,9 +87,9 @@ public class ProofParser {
         List<Equation> ret = new ArrayList<>(expressionSize - 1);
         for (int i = 1; i < expressionSize; i++) {
             ret.add(new Equation(
-                            parseExpression(multieq.expression(i - 1)),
+                            parseExpression(multieq.expression(i - 1), lineNumber),
                             parseRelativeOperator(multieq.relative(i - 1), lineNumber),
-                            parseExpression(multieq.expression(i)))
+                            parseExpression(multieq.expression(i), lineNumber))
             );
         }
         return ret;
@@ -103,7 +103,100 @@ public class ProofParser {
         return operatorOptional.get();
     }
 
-    private Expression parseExpression(com.colinchartier.probo.gen.ProofParser.ExpressionContext expression) {
-        return new Expression(); //TODO stubbed
+    private Expression parseExpression(com.colinchartier.probo.gen.ProofParser.ExpressionContext expression, int lineNumber) {
+        if (expression.additionSubtraction() != null) {
+            return parseAdditionSubtractionExpression(expression.expression(0), expression.additionSubtraction(), expression.expression(1), lineNumber);
+        }
+        if (expression.multiplicationDivision() != null) {
+            return parseMultiplicationDivision(expression.expression(0), expression.multiplicationDivision(), expression.expression(1), lineNumber);
+        }
+        return parseImplicitMultiplication(expression.powExpression(), lineNumber);
     }
+
+    private Expression parseAdditionSubtractionExpression(com.colinchartier.probo.gen.ProofParser.ExpressionContext left, com.colinchartier.probo.gen.ProofParser.AdditionSubtractionContext plusMinus, com.colinchartier.probo.gen.ProofParser.ExpressionContext right, int lineNumber) {
+        ArithmeticOperator op = plusMinus.PLUS() != null ? ArithmeticOperator.ADD : ArithmeticOperator.SUBTRACT;
+        return new ArithmeticExpression(parseExpression(left, lineNumber), op, parseExpression(right, lineNumber));
+    }
+
+    private Expression parseMultiplicationDivision(com.colinchartier.probo.gen.ProofParser.ExpressionContext left, com.colinchartier.probo.gen.ProofParser.MultiplicationDivisionContext timesDiv, com.colinchartier.probo.gen.ProofParser.ExpressionContext right, int lineNumber) {
+        ArithmeticOperator op = timesDiv.TIMES() != null ? ArithmeticOperator.MULTIPLY : ArithmeticOperator.DIVIDE;
+        return new ArithmeticExpression(parseExpression(left, lineNumber), op, parseExpression(right, lineNumber));
+    }
+
+    private Expression parseImplicitMultiplication(List<com.colinchartier.probo.gen.ProofParser.PowExpressionContext> powExpressionContexts, int lineNumber) {
+        int length = powExpressionContexts.size();
+        Expression ret = parsePowExpression(powExpressionContexts.get(0), lineNumber);
+        for (int i = 1; i < length; i++) {
+            ret = new ArithmeticExpression(ret, ArithmeticOperator.MULTIPLY, parsePowExpression(powExpressionContexts.get(i), lineNumber));
+        }
+        return ret;
+    }
+
+    private Expression parsePowExpression(com.colinchartier.probo.gen.ProofParser.PowExpressionContext powExpressionContext, int lineNumber) {
+        int length = powExpressionContext.negativeAtom().size();
+        Expression ret = parseNegativeAtom(powExpressionContext.negativeAtom(0), lineNumber);
+        for (int i = 1; i < length; i++) {
+            ret = new ArithmeticExpression(ret, ArithmeticOperator.EXPONENTIATE, parseNegativeAtom(powExpressionContext.negativeAtom(i), lineNumber));
+        }
+        return ret;
+    }
+
+    private Expression parseNegativeAtom(com.colinchartier.probo.gen.ProofParser.NegativeAtomContext negativeAtomContext, int lineNumber) {
+        if (negativeAtomContext.MINUS() != null) {
+            return new NegativeExpression(parseAtom(negativeAtomContext.atom(), lineNumber));
+        } else {
+            return parseAtom(negativeAtomContext.atom(), lineNumber);
+        }
+    }
+
+    private Expression parseAtom(com.colinchartier.probo.gen.ProofParser.AtomContext atom, int lineNumber) {
+        if (atom.expression() != null) {
+            return parseExpression(atom.expression(), lineNumber);
+        }
+        if (atom.variable() != null) {
+            return parseVariable(atom.variable(), lineNumber);
+        }
+        if (atom.scientific() != null) {
+            return parseScientific(atom.scientific(), lineNumber);
+        }
+        throw new AssertionError("An atom wasn't an expression, variable, or constant.");
+    }
+
+    private Expression parseVariable(com.colinchartier.probo.gen.ProofParser.VariableContext variable, int lineNumber) {
+        return new VariableExpression(variable.getText());
+    }
+
+    //in the comments, numbers refer to 1.2E3.4
+    private Expression parseScientific(com.colinchartier.probo.gen.ProofParser.ScientificContext scientific, int lineNumber) {
+        BigInteger primaryCharacteristic = null; //1
+        BigInteger primaryMantissa = null; //2
+        BigInteger exponentCharacteristic = null; //3
+        BigInteger exponentMantissa = null; //4
+        com.colinchartier.probo.gen.ProofParser.NumberContext primary = scientific.number(0);
+        if (primary.integer().size() == 1) { // 1 or .2
+            if (scientific.number(0).POINT() != null) { //this case it's .1
+                primaryMantissa = new BigInteger(primary.integer(0).getText());
+            } else { //this case it's 1
+                primaryCharacteristic = new BigInteger(primary.integer(0).getText());
+            }
+        } else { // primary number is 1.2
+            primaryCharacteristic = new BigInteger(primary.integer(0).getText());
+            primaryMantissa = new BigInteger(primary.integer(1).getText());
+        }
+        if (scientific.E() != null) { //primary number is ...E...
+            com.colinchartier.probo.gen.ProofParser.NumberContext exponent = scientific.number(1);
+            if (exponent.integer().size() == 1) { // ...E3 or ...E.4
+                if (scientific.number(0).POINT() != null) { //this case it's ...E.4
+                    exponentMantissa = new BigInteger(exponent.integer(0).getText());
+                } else { //this case it's ...E3
+                    exponentCharacteristic = new BigInteger(exponent.integer(0).getText());
+                }
+            } else { // ...E3.4
+                exponentCharacteristic = new BigInteger(exponent.integer(0).getText());
+                exponentMantissa = new BigInteger(exponent.integer(1).getText());
+            }
+        }
+        return new NumericExpression(primaryCharacteristic, primaryMantissa, exponentCharacteristic, exponentMantissa);
+    }
+
 }
