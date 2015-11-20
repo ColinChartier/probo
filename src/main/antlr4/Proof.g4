@@ -1,7 +1,7 @@
 grammar Proof;
 
 proof
-	: proofline+
+	: (proofline LINE_BREAK)+
 	;
 	
 proofline
@@ -126,6 +126,10 @@ DIGIT
     : ('0'..'9')
     ;
 
+LINE_BREAK
+    : '\n'|'\r\n'
+    ;
+
 WS
-    : [ \r\n\t]+ -> skip
+    : [ \r\t]+ -> skip
     ;

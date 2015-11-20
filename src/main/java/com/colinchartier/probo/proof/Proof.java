@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 public class Proof {
-    ImmutableList<ProofMember> members;
+    private final ImmutableList<ProofMember> members;
 
     public Proof(ImmutableList<ProofMember> members) {
         Preconditions.checkNotNull(members);
@@ -13,6 +13,10 @@ public class Proof {
 
     @Override
     public String toString( ) {
-        return "Proof with " + members.size() + " members." + members.toString();
+        return "Proof with " + members.size() + " members. " + members.toString();
+    }
+
+    public ImmutableList<ProofMember> getMembers() {
+        return members;
     }
 }

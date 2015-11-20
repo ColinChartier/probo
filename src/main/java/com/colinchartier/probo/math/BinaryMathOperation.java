@@ -1,13 +1,8 @@
 package com.colinchartier.probo.math;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Maps;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Optional;
 
 public enum BinaryMathOperation implements BinaryEvaluator {
@@ -42,28 +37,27 @@ public enum BinaryMathOperation implements BinaryEvaluator {
         }
     };
 
-    static final ImmutableMap<String, BinaryMathOperation> symbolMap = populateSymbolMap();
+    static final ImmutableMap<String, BinaryMathOperation> identifierMap = populateIdentifierMap();
 
-    private static ImmutableMap<String, BinaryMathOperation> populateSymbolMap() {
+    private static ImmutableMap<String, BinaryMathOperation> populateIdentifierMap() {
         ImmutableMap.Builder<String, BinaryMathOperation> b = ImmutableMap.builder();
         for(BinaryMathOperation v : values()) {
-            b.put(v.getSymbol(), v);
+            b.put(v.getIdentifier(), v);
         }
         return b.build();
     }
 
-    private final String symbol;
+    private final String identifier;
 
     BinaryMathOperation(String symbol) {
-        this.symbol = symbol;
+        this.identifier = symbol;
     }
 
-
-    public String getSymbol() {
-        return symbol;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public static Optional<BinaryMathOperation> getOperation(String symbol) {
-        return Optional.ofNullable(symbolMap.get(symbol));
+    public static Optional<BinaryMathOperation> getOperation(String identifier) {
+        return Optional.ofNullable(identifierMap.get(identifier));
     }
 }
