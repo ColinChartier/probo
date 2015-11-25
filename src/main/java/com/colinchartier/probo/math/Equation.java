@@ -16,8 +16,20 @@ public class Equation {
         this.operator = operator;
     }
 
+    public Expression getLeft() {
+        return left;
+    }
+
+    public Expression getRight() {
+        return right;
+    }
+
+    public RelativeOperator getOperator() {
+        return operator;
+    }
+
     @Override
-    public String toString( ) {
+    public String toString() {
         return left + operator.getIdentifier() + right;
     }
 }

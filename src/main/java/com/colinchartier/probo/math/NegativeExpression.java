@@ -6,4 +6,9 @@ public class NegativeExpression implements Expression {
     public NegativeExpression(Expression expression) {
         this.expression = expression;
     }
+
+    @Override
+    public boolean isEquivalent(Expression other) {
+        return false; //TODO
+    }
 }

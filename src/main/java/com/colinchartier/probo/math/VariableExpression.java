@@ -14,4 +14,9 @@ public class VariableExpression implements Expression {
     public String toString() {
         return id;
     }
+
+    @Override
+    public boolean isEquivalent(Expression other) {
+        return false; //TODO
+    }
 }

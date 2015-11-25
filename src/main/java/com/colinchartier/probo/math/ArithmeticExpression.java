@@ -15,4 +15,9 @@ public class ArithmeticExpression implements Expression {
     public String toString() {
         return left + operator.getIdentifier() + right;
     }
+
+    @Override
+    public boolean isEquivalent(Expression other) {
+        return false; //TODO
+    }
 }
