@@ -1,9 +1,9 @@
 package com.colinchartier.probo.proof;
 
-public class ProofValidityChecker {
+public class ProofVerifier {
     private final Proof proof;
 
-    public ProofValidityChecker(Proof proof) {
+    public ProofVerifier(Proof proof) {
         this.proof = proof;
     }
 
