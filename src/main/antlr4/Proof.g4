@@ -15,8 +15,17 @@ assumption
 	;
 	
 definition
-	: 'let' variable 'in' set (suchthat multiequation)? justification?
+	: let WS variable WS in WS set (suchthat multiequation)? justification?
 	;
+
+let
+    : 'let'
+    ;
+
+in
+    : 'in'
+    | '\\in'
+    ;
 	
 suchthat
 	: 'st'
@@ -38,15 +47,34 @@ multiequation
     ;
 
 relative
+    : gt
+    | lt
+    | eq
+    | geq
+    | leq
+    ;
+
+gt
     : '>'
-    | '<'
-    | '='
-    | '>='
-    | '<='
+    ;
+lt
+    : '<'
+    ;
+eq
+    : '='
+    ;
+leq
+    : '<='
+    | '\\leq'
+    ;
+geq
+    : '>='
+    | '\\geq'
     ;
 	
 set
 	: LETTER
+	| '\\mathbb{' LETTER '}'
 	;
 
 expression 
@@ -133,9 +161,9 @@ DIGIT
     ;
 
 LINE_BREAK
-    : '\n'|'\r\n'
+    : '\r'? '\n'|'\r'
     ;
 
 WS
-    : [ \r\t]+ -> skip
+    : [ \t]+
     ;
