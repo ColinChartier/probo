@@ -69,8 +69,10 @@ public class ProofParser {
     }
 
     private void parseDefinition(ImmutableList.Builder<ProofMember> proofMembers, com.colinchartier.probo.gen.ProofParser.DefinitionContext definition) {
-        String identifier = definition.variable().getText();
-        proofMembers.add(new VariableDeclaration(identifier, BaseSet.REALS)); //TODO sort of stubbed
+        for (com.colinchartier.probo.gen.ProofParser.VariableContext var : definition.variable()) {
+            String identifier = var.getText();
+            proofMembers.add(new VariableDeclaration(identifier, BaseSet.REALS)); //TODO sort of stubbed
+        }
     }
 
 

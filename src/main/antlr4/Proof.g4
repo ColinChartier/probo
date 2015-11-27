@@ -11,15 +11,21 @@ proofline
 	;
 	
 assumption
-	: 'assume' multiequation
+	: assume WS multiequation
 	;
+
+assume
+    : 'assume'
+    | 'Assume'
+    ;
 	
 definition
-	: let WS variable WS in WS set (suchthat multiequation)? justification?
+	: let WS variable (',' variable)* WS? in WS? set (suchthat multiequation)? justification?
 	;
 
 let
     : 'let'
+    | 'Let'
     ;
 
 in
@@ -31,12 +37,24 @@ suchthat
 	: 'st'
 	| 's.t.'
 	| 's.t'
+	| 'ST'
+	| 'S.T'
 	| 'such that'
+	| 'Such that'
 	;
 	
 deduction
-	: 'then' multiequation justification?
+	: then WS multiequation (WS justification)?
 	;
+
+then
+    : 'then'
+    | 'therefore'
+    | 'thus'
+    | 'Then'
+    | 'Therefore'
+    | 'Thus'
+    ;
 	
 justification
 	: '[' .*? ']'

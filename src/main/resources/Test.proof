@@ -1,3 +1,4 @@
-let x in R
-assume 9 > x > 3
-then x^2 > 9 [since x>3]
+Let x\inR
+Assume x>5
+Then 5x>25
+Therefore 5x>20
