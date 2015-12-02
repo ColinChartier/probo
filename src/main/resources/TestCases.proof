@@ -1,0 +1,10 @@
+Assume x>5 \lor y>5
+    Then there are two cases to consider:
+    Case 1:
+        x>5
+        Then max(x,y)>5
+    Case 2:
+        y>5
+        Then max(x,y)>5
+    In either case, max(x,y)>5
+Therefore, x>5 \lor y>5 \implies max(x,y)>5

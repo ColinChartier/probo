@@ -145,7 +145,7 @@ public class ProofParser {
 
     private Expression parseNegativeAtom(com.colinchartier.probo.gen.ProofParser.NegativeAtomContext negativeAtomContext, int lineNumber) {
         if (negativeAtomContext.MINUS() != null) {
-            return new NegativeExpression(parseAtom(negativeAtomContext.atom(), lineNumber));
+            return new NegationExpression(parseAtom(negativeAtomContext.atom(), lineNumber));
         } else {
             return parseAtom(negativeAtomContext.atom(), lineNumber);
         }

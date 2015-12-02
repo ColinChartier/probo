@@ -9,4 +9,6 @@ public interface Expression {
      * @return whether or not the two functions are completely equivalent.
      */
     boolean isEquivalent(Expression other);
+
+    Expression simplify();
 }
