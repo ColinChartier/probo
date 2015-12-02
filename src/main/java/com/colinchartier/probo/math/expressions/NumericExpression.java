@@ -1,4 +1,6 @@
-package com.colinchartier.probo.math;
+package com.colinchartier.probo.math.expressions;
+
+import com.colinchartier.probo.math.Expression;
 
 import java.math.BigDecimal;
 

@@ -1,9 +1,9 @@
 package com.colinchartier.probo.proof.axioms;
 
-import com.colinchartier.probo.math.ArithmeticExpression;
 import com.colinchartier.probo.math.ArithmeticOperator;
 import com.colinchartier.probo.math.Equation;
 import com.colinchartier.probo.math.Expression;
+import com.colinchartier.probo.math.expressions.ArithmeticExpression;
 import com.colinchartier.probo.proof.Axiom;
 
 public enum SimpleArithmeticAxioms implements Axiom {

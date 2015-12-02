@@ -2,6 +2,10 @@ package com.colinchartier.probo.proof;
 
 import com.colinchartier.probo.gen.ProofLexer;
 import com.colinchartier.probo.math.*;
+import com.colinchartier.probo.math.expressions.ArithmeticExpression;
+import com.colinchartier.probo.math.expressions.NegationExpression;
+import com.colinchartier.probo.math.expressions.NumericExpression;
+import com.colinchartier.probo.math.expressions.VariableExpression;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -11,7 +15,7 @@ import org.antlr.v4.runtime.Lexer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -170,35 +174,7 @@ public class ProofParser {
 
     //in the comments, numbers refer to 1.2E3.4
     private Expression parseScientific(com.colinchartier.probo.gen.ProofParser.ScientificContext scientific, int lineNumber) {
-        BigInteger primaryCharacteristic = null; //1
-        BigInteger primaryMantissa = null; //2
-        BigInteger exponentCharacteristic = null; //3
-        BigInteger exponentMantissa = null; //4
-        com.colinchartier.probo.gen.ProofParser.NumberContext primary = scientific.number(0);
-        if (primary.integer().size() == 1) { // 1 or .2
-            if (scientific.number(0).POINT() != null) { //this case it's .1
-                primaryMantissa = new BigInteger(primary.integer(0).getText());
-            } else { //this case it's 1
-                primaryCharacteristic = new BigInteger(primary.integer(0).getText());
-            }
-        } else { // primary number is 1.2
-            primaryCharacteristic = new BigInteger(primary.integer(0).getText());
-            primaryMantissa = new BigInteger(primary.integer(1).getText());
-        }
-        if (scientific.E() != null) { //primary number is ...E...
-            com.colinchartier.probo.gen.ProofParser.NumberContext exponent = scientific.number(1);
-            if (exponent.integer().size() == 1) { // ...E3 or ...E.4
-                if (scientific.number(0).POINT() != null) { //this case it's ...E.4
-                    exponentMantissa = new BigInteger(exponent.integer(0).getText());
-                } else { //this case it's ...E3
-                    exponentCharacteristic = new BigInteger(exponent.integer(0).getText());
-                }
-            } else { // ...E3.4
-                exponentCharacteristic = new BigInteger(exponent.integer(0).getText());
-                exponentMantissa = new BigInteger(exponent.integer(1).getText());
-            }
-        }
-        return new NumericExpression(primaryCharacteristic, primaryMantissa, exponentCharacteristic, exponentMantissa);
+        return new NumericExpression(new BigDecimal(scientific.getText()));
     }
 
 }

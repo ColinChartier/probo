@@ -1,4 +1,7 @@
-package com.colinchartier.probo.math;
+package com.colinchartier.probo.math.expressions;
+
+import com.colinchartier.probo.math.ArithmeticOperator;
+import com.colinchartier.probo.math.Expression;
 
 public class ArithmeticExpression implements Expression {
     private final Expression left;
@@ -19,5 +22,10 @@ public class ArithmeticExpression implements Expression {
     @Override
     public boolean isEquivalent(Expression other) {
         return false; //TODO
+    }
+
+    @Override
+    public Expression simplify() {
+        return null;
     }
 }
