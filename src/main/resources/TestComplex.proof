@@ -1,0 +1,12 @@
+[Want to prove: \forall x \in \mathbb{R}: (x=5 or x=10) => (\exists y \in Z: x = 5y)]
+Let x \in \mathbb{R}
+Assume x=5 or x=10
+    Then there are two cases to consider:
+    Case 1: x=5
+        Let y_0 be 1 \in \mathbb{Z}
+        Then x = 5y
+    Case 2:
+        Let y_0 be 2 \in \mathbb{Z}
+        Then x = 5y
+    In either case, x = 5y
+Therefore, \forall x \in \mathbb{R}: (x = 5 or x = 10) => (\exists y \in \mathbb Z: x=5y)
