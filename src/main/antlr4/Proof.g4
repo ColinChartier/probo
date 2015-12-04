@@ -8,6 +8,7 @@ proofline
 	: assumption
 	| definition
 	| deduction
+	| standalone_multiequation //I.E you can have one line be "Then x=5" and the next be " > 5"
 	;
 	
 assumption
@@ -63,6 +64,9 @@ justification
 multiequation  
     : expression (relative expression)+
     ;
+
+standalone_multiequation
+    : (relative expression)+
 
 relative
     : gt
